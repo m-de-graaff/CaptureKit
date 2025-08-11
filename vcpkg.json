@@ -1,0 +1,39 @@
+{
+  "name": "capturekit",
+  "version": "0.1.0",
+  "description": "Professional screen capture and video editing toolkit",
+  "homepage": "https://github.com/m-de-graaff/capturekit",
+  "dependencies": [
+    {
+      "name": "qt6",
+      "features": ["widgets", "gui", "core"]
+    },
+    {
+      "name": "catch2",
+      "version>=": "3.0.0"
+    },
+    {
+      "name": "nlohmann-json",
+      "version>=": "3.11.0"
+    },
+    {
+      "name": "ffmpeg",
+      "features": ["core", "avcodec", "avformat", "avutil", "swscale"]
+    },
+    {
+      "name": "opencv",
+      "features": ["core", "imgproc", "video", "videoio"]
+    },
+    {
+      "name": "skia",
+      "features": ["core", "gpu", "svg"]
+    }
+  ],
+  "builtin-baseline": "2024-01-01",
+  "overrides": [
+    {
+      "name": "qt6",
+      "version": "6.6.0"
+    }
+  ]
+}
