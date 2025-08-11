@@ -1,0 +1,529 @@
+# CaptureKit C++ Coding Standards and Best Practices
+
+## Core Principles
+
+### 0. Don't sweat the small stuff
+- Don't enforce personal tastes or obsolete practices
+- Say only what needs saying
+- Focus on what matters for code quality and maintainability
+
+### 1. Compile cleanly at high warning levels
+- Use compiler's highest warning level
+- Require clean (warning-free) builds
+- Understand all warnings
+- Eliminate warnings by changing code, not reducing warning level
+
+### 2. Use automated build system
+- One-action build system that builds entire project
+- No manual intervention required
+- CMake with presets for different configurations
+
+### 3. Use version control system
+- Check in frequently after unit tests pass
+- Ensure checked-in code doesn't break build
+- Never keep files checked out for long periods
+
+### 4. Invest in code reviews
+- More eyes help make more quality
+- Show your code and read others'
+- Learn and benefit from peer review
+
+## Design Style
+
+### 5. Give one entity one cohesive responsibility
+- Each entity (variable, class, function, namespace, module, library) should have one well-defined responsibility
+- As entity grows, scope increases but responsibility should not diverge
+
+### 6. Correctness, simplicity, and clarity come first
+- KISS (Keep It Simple Software)
+- Correct is better than fast
+- Simple is better than complex
+- Clear is better than cute
+- Safe is better than insecure
+
+### 7. Know when and how to code for scalability
+- Keep eye on asymptotic complexity
+- Algorithms should take predictable, preferably linear time
+- Focus on big-Oh complexity over micro-optimizations
+
+### 8. Don't optimize prematurely
+- First rule: Don't do it
+- Second rule (experts only): Don't do it yet
+- Measure twice, optimize once
+
+### 9. Don't pessimize prematurely
+- Use efficient design patterns that flow naturally
+- No harder to write than pessimized alternatives
+- This is not premature optimization
+
+### 10. Minimize global and shared data
+- Avoid shared data, especially global data
+- Shared data increases coupling, reduces maintainability and performance
+
+### 11. Hide information
+- Don't expose internal information from entities providing abstraction
+
+### 12. Know when and how to code for concurrency
+- Minimize sharing objects where possible
+- Share the right ones safely
+
+### 13. Ensure resources are owned by objects
+- Use explicit RAII and smart pointers
+- Never allocate more than one resource in single statement
+- Pass raw resources immediately to owning objects
+
+## Coding Style
+
+### 14. Prefer compile- and link-time errors to run-time errors
+- Use compiler to check invariants during compilation
+- Run-time checks are control- and data-dependent
+
+### 15. Use const proactively
+- Make const your default choice
+- Immutable values are easier to understand, track, and reason about
+- Don't cast away const except to call const-incorrect functions
+
+### 16. Avoid macros
+- Macros are the bluntest instrument of C++ abstraction facilities
+- Hard to tame, marching to their own beat
+- Avoid them
+
+### 17. Avoid magic numbers
+- Use symbolic names and expressions instead
+- Not self-explanatory and complicate maintenance
+
+### 18. Declare variables as locally as possible
+- Variables introduce state
+- Deal with as little state as possible
+- Keep lifetimes as short as possible
+
+### 19. Always initialize variables
+- Uninitialized variables are common source of bugs
+- Initialize upon definition
+
+### 20. Avoid long functions and deep nesting
+- Short is better than long
+- Flat is better than deep
+- Often solved by better refactoring
+
+### 21. Avoid initialization dependencies across compilation units
+- Namespace-level objects in different compilation units should never depend on each other
+- Initialization order is undefined
+
+### 22. Minimize definitional dependencies
+- Don't #include definition when forward declaration will do
+- Avoid cyclic dependencies
+- Cyclic dependencies work against modularity
+
+### 23. Make header files self-sufficient
+- Each header should be compilable standalone
+- Include any headers its contents depend upon
+
+### 24. Always write internal #include guards
+- Use #pragma once for all header files
+- Never write external #include guards
+
+## Functions and Operators
+
+### 25. Take parameters appropriately
+- Distinguish among input, output, and input/output parameters
+- Between value and reference parameters
+- Take them appropriately
+
+### 26. Preserve natural semantics for overloaded operators
+- Overload operators only for good reason
+- Preserve natural semantics
+- If difficult, you might be misusing operator overloading
+
+### 27. Prefer canonical forms of arithmetic and assignment operators
+- When defining binary arithmetic operators, provide assignment versions
+- Write to minimize duplication and maximize efficiency
+
+### 28. Prefer canonical form of ++ and --
+- Define operator++ and operator-- to mimic built-in counterparts
+- Prefer prefix versions if you don't need original value
+
+### 29. Consider overloading to avoid implicit type conversions
+- Provide overloaded functions with signatures that match common argument types exactly
+- Won't cause conversions
+
+### 30. Avoid overloading &&, ||, or , (comma)
+- Built-in versions enjoy special compiler treatment
+- Overloading makes them ordinary functions with different semantics
+- Sure way to introduce subtle bugs
+
+### 31. Don't write code that depends on function argument evaluation order
+- Order is unspecified
+- Don't rely on specific ordering
+
+## Class Design and Inheritance
+
+### 32. Be clear what kind of class you're writing
+- Know which kind you are writing
+- Different kinds have different blueprints
+
+### 33. Prefer minimal classes to monolithic classes
+- Small classes are easier to write, get right, test, and use
+- More likely to be usable in variety of situations
+- Avoid kitchen-sink classes
+
+### 34. Prefer composition to inheritance
+- Inheritance is second-tightest coupling relationship
+- Tight coupling is undesirable
+- Prefer composition unless inheritance truly benefits design
+
+### 35. Avoid inheriting from classes not designed to be base classes
+- Classes meant to be standalone obey different blueprint than base classes
+- Serious design error
+- To add behavior, prefer non-member functions
+- To add state, prefer composition
+
+### 36. Prefer providing abstract interfaces
+- Abstract interfaces help focus on getting abstraction right
+- Without muddling with implementation or state management details
+- Design hierarchies that implement abstract interfaces
+
+### 37. Public inheritance is substitutability
+- Inherit not to reuse, but to be reused
+- Allows base class pointer/reference to refer to derived class object
+- Without destroying code correctness
+
+### 38. Practice safe overriding
+- Preserve substitutability when overriding virtual functions
+- Observe pre- and post-conditions
+- Don't change default arguments
+- Prefer explicitly redeclaring overrides as virtual
+
+### 39. Consider making virtual functions nonpublic
+- In base classes with high cost of change
+- Prefer public functions nonvirtual
+- Prefer virtual functions private or protected
+
+### 40. Avoid providing implicit conversions
+- Can often do more damage than good
+- Think twice before providing implicit conversions
+- Prefer explicit conversions
+
+### 41. Make data members private
+- Except in behaviorless aggregates (C-style structs)
+- Keep data members private
+- Avoid mixes of public and nonpublic data
+
+### 42. Don't give away your internals
+- Avoid returning handles to internal data
+- Clients won't uncontrollably modify state
+
+### 43. Pimpl judiciously
+- Make private members truly invisible using Pimpl idiom
+- Implement compiler firewalls
+- Increase information hiding
+
+### 44. Prefer writing nonmember nonfriend functions
+- Where possible, prefer making functions nonmember nonfriends
+- Avoid membership fees
+
+### 45. Always provide new and delete together
+- They're a package deal
+- Every class-specific overload must be accompanied by corresponding overload
+
+### 46. Provide all standard forms of new
+- If defining any overload, provide all three: plain, in-place, and nothrow
+- Don't hide good news
+
+## Construction, Destruction, and Copying
+
+### 47. Define and initialize member variables in same order
+- Member variables always initialized in order declared in class definition
+- Constructor initialization list order is ignored
+- Don't confusingly specify different order
+
+### 48. Prefer initialization to assignment in constructors
+- Prevents needless run-time work
+- Takes same amount of typing
+
+### 49. Avoid calling virtual functions in constructors and destructors
+- Virtual functions don't behave virtually inside constructors/destructors
+- Direct/indirect call to unimplemented pure virtual function results in undefined behavior
+
+### 50. Make base class destructors public and virtual, or protected and nonvirtual
+- If deletion through base pointer should be allowed: public and virtual
+- Otherwise: protected and nonvirtual
+
+### 51. Destructors, deallocation, and swap never fail
+- Everything they attempt shall succeed
+- Never allow error to be reported
+- Types with throwing destructors forbidden from use with standard library
+
+### 52. Copy and destroy consistently
+- If defining any of copy constructor, copy assignment, or destructor
+- You might need to define one or both of others
+
+### 53. Explicitly enable or disable copying
+- Knowingly choose among compiler-generated, writing own, or explicitly disabling
+- Copy consciously
+
+### 54. Avoid slicing
+- Object slicing is automatic, invisible, and likely to bring polymorphic designs to halt
+- Consider disabling copy constructor and assignment operator in base classes
+- Supply virtual Clone member function instead
+
+### 55. Prefer canonical form of assignment
+- Nonvirtual with specific signature
+- Your assignment
+
+### 56. Provide no-fail swap
+- Consider providing swap function to efficiently and infallibly swap internals
+- Handy for implementing idioms
+- Provides guaranteed commit function
+
+## Namespaces and Modules
+
+### 57. Keep type and nonmember function interface in same namespace
+- Nonmember functions designed to be part of class X interface
+- Must be defined in same namespace as X
+- To be called correctly
+
+### 58. Keep types and functions in separate namespaces
+- Unless specifically intended to work together
+- Isolate types from unintentional argument-dependent lookup
+- Encourage intentional ADL
+
+### 59. Don't write namespace usings in header file or before #include
+- Never write using declaration or directive before #include
+- In header files, don't write namespace-level using directives
+- Explicitly namespace-qualify all names
+
+### 60. Avoid allocating and deallocating memory in different modules
+- Makes program fragile by creating subtle long-distance dependency
+- Must be compiled with same compiler version and flags
+- Module allocating memory had better still be loaded when deallocation happens
+
+### 61. Don't define entities with linkage in header file
+- Entities with linkage have memory allocated for them
+- Results in either link-time errors or memory waste
+- Put all entities with linkage in implementation files
+
+### 62. Don't allow exceptions to propagate across module boundaries
+- No ubiquitous binary standard for C++ exception handling
+- Don't allow exceptions to propagate between code unless you control compiler
+- Don't let exceptions propagate across module/subsystem boundaries
+
+### 63. Use sufficiently portable types in module interface
+- Don't allow type to appear in external interface unless all clients understand it correctly
+- Use highest level of abstraction clients can understand
+
+## Templates and Genericity
+
+### 64. Blend static and dynamic polymorphism judiciously
+- Static and dynamic polymorphism are complementary
+- Understand tradeoffs
+- Use each for what it's best at
+- Mix them to get best of both worlds
+
+### 65. Customize intentionally and explicitly
+- Intentional is better than accidental
+- Explicit is better than implicit
+- Provide points of customization knowingly and correctly
+- Document them clearly
+
+### 66. Don't specialize function templates
+- Avoid trying to write specialization
+- Write overload instead
+- Put it in namespace of type(s) overload is designed for
+
+### 67. Don't write unintentionally nongeneric code
+- Commit to abstractions, not to details
+- Use most generic and abstract means to implement functionality
+
+## Error Handling and Exceptions
+
+### 68. Assert liberally
+- Use assert liberally to document assumptions internal to module
+- Must always be true and represent programming errors
+- Ensure assertions don't perform side effects
+
+### 69. Establish rational error handling policy
+- Develop practical, consistent, and rational policy early in design
+- Stick to it strictly
+- Include: identification, severity, detection, propagation, handling, reporting
+
+### 70. Distinguish between errors and non-errors
+- A function is unit of work
+- Failures should be viewed as errors based on impact on functions
+- Exclude internal programming errors (use assertions)
+
+### 71. Design and write error-safe code
+- Give strongest safety guarantee that won't penalize callers who don't need it
+- Always give at least basic guarantee
+- Ensure errors always leave program in valid state
+- Prefer strong guarantee (rollback or commit)
+- Prefer no-fail guarantee when possible
+
+### 72. Prefer exceptions to report errors
+- Prefer using exceptions over error codes
+- Use status codes for errors when exceptions cannot be used
+- Use other methods when recovery is impossible or not required
+
+### 73. Throw by value, catch by reference
+- Throw exceptions by value (not pointer)
+- Catch them by reference (usually to const)
+- When rethrowing, prefer just throw; to throw e;
+
+### 74. Report, handle, and translate errors appropriately
+- Report errors at point they are detected and identified
+- Handle or translate each error at nearest level that can do it correctly
+
+### 75. Avoid exception specifications
+- Don't write exception specifications unless forced to
+- Take exception to these specifications
+
+## STL: Containers
+
+### 76. Use vector by default
+- Using "right container" is great if you have good reason
+- Otherwise, write vector and keep going
+- You did the right thing
+
+### 77. Use vector and string instead of arrays
+- Avoid implementing array abstractions with C-style arrays
+- Pointer arithmetic and memory management primitives
+- Makes life easier, safer and more scalable software
+
+### 78. Use vector to exchange data with non-C++ APIs
+- vector and string::c_str are gateway to communicate with non-C++ APIs
+- Don't assume iterators are pointers
+- Use &*iter to get address of element
+
+### 79. Store only values and smart pointers in containers
+- Containers assume they contain value-like types
+- Including value types, smart pointers, and iterators
+
+### 80. Prefer push_back to other ways of expanding sequence
+- If you don't need to care about insert position
+- Other means can be vastly slower and less clear
+
+### 81. Prefer range operations to single-element operations
+- When adding elements to sequence containers
+- Prefer range operations instead of series of single-element calls
+- Generally easier to write, read, and more efficient
+
+### 82. Use accepted idioms to shrink capacity and erase elements
+- Use "swap trick" to shed excess capacity
+- Use erase-remove idiom to erase elements
+
+## STL: Algorithms
+
+### 83. Use checked STL implementation
+- Safety first
+- Use checked STL implementation even if only available for one platform
+- Even if only used during pre-release testing
+
+### 84. Prefer algorithm calls to handwritten loops
+- For very simple loops, handwritten loops can be simplest and most efficient
+- Algorithm calls can be more expressive and maintainable
+- Less error-prone and as efficient
+- Consider writing custom function objects
+
+### 85. Use right STL search algorithm
+- Search "just enough"
+- Use find/find_if or count/count_if for unsorted ranges
+- Use lower_bound, upper_bound, equal_range for sorted ranges
+
+### 86. Use right STL sort algorithm
+- Sort "just enough"
+- Understand what each sorting algorithm does
+- Use cheapest algorithm that does what you need
+
+### 87. Make predicates pure functions
+- Predicate result depends only on arguments
+- Don't allow predicates to hold or access state affecting result
+- Prefer to make operator() const member function
+
+### 88. Prefer function objects over functions
+- Objects plug in better than functions
+- Prefer passing function objects, not functions, to algorithms
+- Comparers for associative containers must be function objects
+- Function objects are adaptable and typically faster
+
+### 89. Write function objects correctly
+- Be cheap, be adaptable
+- Design to be values that are cheap to copy
+- Make them adaptable by inheriting from unary_function or binary_function
+
+## Type Safety
+
+### 90. Avoid type switching; prefer polymorphism
+- Avoid switching on type of object to customize behavior
+- Use templates and virtual functions
+- Let types decide their behavior
+
+### 91. Rely on types, not on representations
+- Don't make assumptions about how objects are exactly represented in memory
+- Let types decide how objects are written to and read from memory
+
+### 92. Avoid using reinterpret_cast
+- Don't try to force compiler to reinterpret bits of one type as another
+- Opposite of maintaining type safety
+- Not guaranteed to do anything in particular
+
+### 93. Avoid using static_cast on pointers
+- Pointers to dynamic objects don't static cast
+- Safe alternatives: dynamic_cast, refactoring, redesigning
+
+### 94. Avoid casting away const
+- Sometimes results in undefined behavior
+- Staple of poor programming style even when legal
+
+### 95. Don't use C-style casts
+- Have different and often dangerous semantics depending on context
+- All disguised behind single syntax
+- C++-style casts help guard against unexpected errors
+
+### 96. Don't memcpy or memcmp non-PODs
+- Don't try to X-ray objects
+- Don't use memcpy and memcmp for anything more structured than raw memory
+
+### 97. Don't use unions to reinterpret representation
+- Can be abused into obtaining "cast without a cast"
+- More insidious and less predictable than reinterpret_cast
+
+### 98. Don't use varargs (ellipsis)
+- Dangerous carryover from C
+- Avoid varargs
+- Use higher-level C++ constructs and libraries instead
+
+### 99. Don't use invalid objects or unsafe functions
+- Both wreak havoc on program's health
+- Don't use expired medicines
+
+### 100. Don't treat arrays polymorphically
+- Treating arrays polymorphically is gross type error
+- Compiler will probably remain silent about it
+- Don't fall into the trap
+
+## Project-Specific Rules
+
+### CaptureKit Specific Standards
+- Use C++20 features appropriately
+- Follow Qt6 best practices for UI components
+- Use RAII for all resource management
+- Implement proper error handling for capture and encoding operations
+- Use smart pointers for memory management
+- Follow the established module structure
+- Write comprehensive tests for all new functionality
+- Document public APIs thoroughly
+- Use consistent naming conventions (snake_case for variables/functions, PascalCase for classes)
+- Prefer composition over inheritance for plugin architecture
+
+## Code rules:
+- **C++20** standard required
+- **4 spaces** for indentation
+- **120 character** line limit
+- **snake_case** for variables and functions
+- **PascalCase** for classes and namespaces
+
+## Commit rules:
+Examples:
+- `feat(capture): add DXGI desktop duplication support`
+- `fix(editor): resolve timeline crash on large projects`
+- `docs(readme): update build instructions for Windows`
